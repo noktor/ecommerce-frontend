@@ -1,17 +1,14 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-interface LoginProps {
-  onSwitchToRegister: () => void;
-  onSwitchToForgotPassword: () => void;
-}
-
-export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginProps) {
+export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +17,7 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
 
     try {
       await login(email, password);
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -97,8 +95,8 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
         </button>
       </form>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
-        <button
-          onClick={onSwitchToForgotPassword}
+        <Link
+          to="/forgot-password"
           style={{
             background: 'none',
             border: 'none',
@@ -108,12 +106,12 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
           }}
         >
           Forgot password?
-        </button>
+        </Link>
       </div>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
         <span>Don't have an account? </span>
-        <button
-          onClick={onSwitchToRegister}
+        <Link
+          to="/register"
           style={{
             background: 'none',
             border: 'none',
@@ -123,7 +121,7 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
           }}
         >
           Register
-        </button>
+        </Link>
       </div>
     </div>
   );
