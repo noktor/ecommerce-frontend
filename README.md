@@ -110,7 +110,7 @@ VITE_API_URL=https://api.yourdomain.com/api
 
 ## 🔗 Backend Integration
 
-This frontend connects to the [E-commerce Backend](https://github.com/your-org/ecommerce-hexagonal-backend) API.
+This frontend connects to the [E-commerce Backend](https://github.com/your-org/ecommerce-backend) API.
 
 ### API Endpoints Used
 
@@ -181,7 +181,7 @@ pnpm check
 
 ## 🔗 Related Repositories
 
-- [E-commerce Backend](https://github.com/your-org/ecommerce-hexagonal-backend) - Backend API with hexagonal architecture
+- [E-commerce Backend](https://github.com/your-org/ecommerce-backend) - Backend API with hexagonal architecture
 
 ## 📄 License
 

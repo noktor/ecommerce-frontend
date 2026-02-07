@@ -1,0 +1,5 @@
+# Netlify redirects file
+# SPA fallback - redirect all routes to index.html for client-side routing
+# Note: API calls should use VITE_API_URL environment variable, not /api/*
+/*    /index.html   200
+

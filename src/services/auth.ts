@@ -1,9 +1,32 @@
 // API URL configuration:
 // - In development: use '/api' to leverage Vite proxy (proxies to http://localhost:3000/api)
-// - In production: use VITE_API_URL environment variable or fallback
-const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.DEV ? '/api' : 'http://localhost:3000/api'
-);
+// - In production: use VITE_API_URL environment variable (set in .env.production or Netlify environment variables)
+//   Example: VITE_API_URL=https://your-backend.onrender.com/api
+function getApiUrl(): string {
+  // If VITE_API_URL is explicitly set, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // In development, use proxy
+  if (import.meta.env.DEV) {
+    return '/api';
+  }
+  
+  // In production, VITE_API_URL must be set
+  // If not set, show error in console and throw
+  const error = 'VITE_API_URL is not configured! Please set it in Netlify environment variables.';
+  console.error('❌', error);
+  console.error('Current environment:', {
+    MODE: import.meta.env.MODE,
+    PROD: import.meta.env.PROD,
+    DEV: import.meta.env.DEV,
+    VITE_API_URL: import.meta.env.VITE_API_URL
+  });
+  throw new Error(error);
+}
+
+const API_URL = getApiUrl();
 
 export interface User {
   id: string;

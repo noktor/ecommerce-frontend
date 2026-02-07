@@ -1,5 +1,5 @@
-# Script per crear el repositori a GitHub i pujar els canvis
-# Requereix un Personal Access Token de GitHub
+# Script to create repository on GitHub and push changes
+# Requires a GitHub Personal Access Token
 
 param(
     [string]$RepoName = "ecommerce-frontend",
@@ -9,22 +9,22 @@ param(
 )
 
 if (-not $GitHubToken) {
-    Write-Host "❌ No s'ha trobat GITHUB_TOKEN a les variables d'entorn." -ForegroundColor Red
+    Write-Host "❌ GITHUB_TOKEN not found in environment variables." -ForegroundColor Red
     Write-Host ""
-    Write-Host "Per crear el repositori automàticament, necessites un Personal Access Token:" -ForegroundColor Yellow
-    Write-Host "1. Ves a https://github.com/settings/tokens" -ForegroundColor Cyan
-    Write-Host "2. Crea un nou token amb permisos 'repo'" -ForegroundColor Cyan
-    Write-Host "3. Executa: `$env:GITHUB_TOKEN='el_teu_token'; .\create-repo.ps1`" -ForegroundColor Cyan
+    Write-Host "To create the repository automatically, you need a Personal Access Token:" -ForegroundColor Yellow
+    Write-Host "1. Go to https://github.com/settings/tokens" -ForegroundColor Cyan
+    Write-Host "2. Create a new token with 'repo' permissions" -ForegroundColor Cyan
+    Write-Host "3. Run: `$env:GITHUB_TOKEN='your_token'; .\create-repo.ps1`" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "O crea el repositori manualment a https://github.com/new i després executa:" -ForegroundColor Yellow
-    Write-Host "  git remote add origin https://github.com/TU_USUARI/$RepoName.git" -ForegroundColor Cyan
+    Write-Host "Or create the repository manually at https://github.com/new and then run:" -ForegroundColor Yellow
+    Write-Host "  git remote add origin https://github.com/YOUR_USERNAME/$RepoName.git" -ForegroundColor Cyan
     Write-Host "  git push -u origin main" -ForegroundColor Cyan
     exit 1
 }
 
-Write-Host "🚀 Creant repositori a GitHub..." -ForegroundColor Green
+Write-Host "🚀 Creating repository on GitHub..." -ForegroundColor Green
 
-# Detectar l'usuari de GitHub
+# Detect GitHub user
 $headers = @{
     "Authorization" = "token $GitHubToken"
     "Accept" = "application/vnd.github.v3+json"
@@ -33,13 +33,13 @@ $headers = @{
 try {
     $userResponse = Invoke-RestMethod -Uri "https://api.github.com/user" -Headers $headers
     $username = $userResponse.login
-    Write-Host "✅ Usuari detectat: $username" -ForegroundColor Green
+    Write-Host "✅ User detected: $username" -ForegroundColor Green
 } catch {
-    Write-Host "❌ Error al autenticar amb GitHub. Verifica el token." -ForegroundColor Red
+    Write-Host "❌ Error authenticating with GitHub. Verify the token." -ForegroundColor Red
     exit 1
 }
 
-# Crear el repositori
+# Create the repository
 $body = @{
     name = $RepoName
     description = $Description
@@ -49,39 +49,39 @@ $body = @{
 
 try {
     $repoResponse = Invoke-RestMethod -Uri "https://api.github.com/user/repos" -Method Post -Headers $headers -Body $body -ContentType "application/json"
-    Write-Host "✅ Repositori creat: $($repoResponse.html_url)" -ForegroundColor Green
+    Write-Host "✅ Repository created: $($repoResponse.html_url)" -ForegroundColor Green
 } catch {
     $errorDetails = $_.ErrorDetails.Message | ConvertFrom-Json
     if ($errorDetails.message -like "*already exists*") {
-        Write-Host "⚠️  El repositori ja existeix. Continuant amb el push..." -ForegroundColor Yellow
+        Write-Host "⚠️  Repository already exists. Continuing with push..." -ForegroundColor Yellow
     } else {
-        Write-Host "❌ Error al crear el repositori: $($errorDetails.message)" -ForegroundColor Red
+        Write-Host "❌ Error creating repository: $($errorDetails.message)" -ForegroundColor Red
         exit 1
     }
 }
 
-# Configurar el remote i fer push
+# Configure remote and push
 Write-Host ""
-Write-Host "📤 Configurant remote i pujant canvis..." -ForegroundColor Green
+Write-Host "📤 Configuring remote and pushing changes..." -ForegroundColor Green
 
-# Eliminar remote si ja existeix
+# Remove remote if it already exists
 git remote remove origin 2>$null
 
-# Afegir el remote
+# Add the remote
 $repoUrl = "https://github.com/$username/$RepoName.git"
 git remote add origin $repoUrl
 
-# Fer push
-Write-Host "Pujant a $repoUrl..." -ForegroundColor Cyan
+# Push
+Write-Host "Pushing to $repoUrl..." -ForegroundColor Cyan
 git push -u origin main
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
-    Write-Host "✅ Tot fet! El repositori està disponible a:" -ForegroundColor Green
+    Write-Host "✅ All done! Repository is available at:" -ForegroundColor Green
     Write-Host "   https://github.com/$username/$RepoName" -ForegroundColor Cyan
 } else {
     Write-Host ""
-    Write-Host "❌ Error al fer push. Verifica les credencials de Git." -ForegroundColor Red
-    Write-Host "   Pots fer push manualment amb: git push -u origin main" -ForegroundColor Yellow
+    Write-Host "❌ Error pushing. Verify Git credentials." -ForegroundColor Red
+    Write-Host "   You can push manually with: git push -u origin main" -ForegroundColor Yellow
 }
 
