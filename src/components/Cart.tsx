@@ -1,41 +1,44 @@
 import { useState, useEffect } from 'react';
-import { api, Cart as CartType, Product } from '../services/api';
+import { api, Product } from '../services/api';
+import { useCart } from '../contexts/CartContext';
 
 interface CartProps {
   onCheckout: (items: Array<{ productId: string; quantity: number }>) => void;
 }
 
 export function Cart({ onCheckout }: CartProps) {
-  const [cart, setCart] = useState<CartType | null>(null);
+  const { cart, removeFromCart, refreshCart } = useCart();
   const [products, setProducts] = useState<Record<string, Product>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadCart();
-  }, []);
+    loadProductDetails();
+  }, [cart]);
 
-  const loadCart = async () => {
+  const loadProductDetails = async () => {
+    if (!cart || cart.items.length === 0) {
+      setProducts({});
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
-      const cartData = await api.cart.getByCustomerId();
-      setCart(cartData);
-
+      
       // Load product details for cart items
-      if (cartData.items.length > 0) {
-        const productPromises = cartData.items.map(item =>
-          api.products.getById(item.productId)
-        );
-        const productData = await Promise.all(productPromises);
-        const productMap: Record<string, Product> = {};
-        productData.forEach(product => {
-          productMap[product.id] = product;
-        });
-        setProducts(productMap);
-      }
+      const productPromises = cart.items.map(item =>
+        api.products.getById(item.productId)
+      );
+      const productData = await Promise.all(productPromises);
+      const productMap: Record<string, Product> = {};
+      productData.forEach(product => {
+        productMap[product.id] = product;
+      });
+      setProducts(productMap);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error loading cart');
+      setError(err instanceof Error ? err.message : 'Error loading products');
     } finally {
       setLoading(false);
     }
@@ -49,8 +52,8 @@ export function Cart({ onCheckout }: CartProps) {
 
   const handleRemoveItem = async (productId: string) => {
     try {
-      await api.cart.removeItem(productId);
-      await loadCart(); // Reload cart after removing item
+      await removeFromCart(productId);
+      // Cart state will be automatically updated via CartContext
     } catch (err) {
       alert(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
