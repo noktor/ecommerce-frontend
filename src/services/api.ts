@@ -41,6 +41,8 @@ export interface Product {
   stock: number;
   category: string;
   createdAt: string;
+  longDescription?: string; // Optional detailed description
+  imageUrl?: string; // Optional product image URL
 }
 
 export interface CartItem {

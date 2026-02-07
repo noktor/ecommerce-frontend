@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { CartProvider, useCart } from './contexts/CartContext';
 import { ProductList } from './components/ProductList';
+import { ProductPage } from './components/ProductPage';
 import { Cart } from './components/Cart';
 import { OrderForm } from './components/OrderForm';
 import { Login } from './components/Login';
@@ -8,16 +10,18 @@ import { Register } from './components/Register';
 import { EmailVerification } from './components/EmailVerification';
 import { ForgotPassword } from './components/ForgotPassword';
 import { ResetPassword } from './components/ResetPassword';
-import { api, Order } from './services/api';
+import { Order } from './services/api';
 
-type View = 'products' | 'cart' | 'orderForm' | 'login' | 'register' | 'forgotPassword' | 'resetPassword' | 'verifyEmail';
+type View = 'products' | 'productDetail' | 'cart' | 'orderForm' | 'login' | 'register' | 'forgotPassword' | 'resetPassword' | 'verifyEmail';
 type AuthView = 'login' | 'register' | 'forgotPassword';
 
 function AppContent() {
   const { user, loading, logout } = useAuth();
+  const { cartItemCount, addToCart } = useCart();
   const [view, setView] = useState<View>('products');
   const [authView, setAuthView] = useState<AuthView>('login');
   const [showCart, setShowCart] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [orderItems, setOrderItems] = useState<Array<{ productId: string; quantity: number }>>([]);
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [verificationToken, setVerificationToken] = useState<string | null>(null);
@@ -69,11 +73,22 @@ function AppContent() {
     }
 
     try {
-      await api.cart.addItem(productId, 1);
-      console.log('Product added to cart!');
+      await addToCart(productId, 1);
+      // Cart state will be automatically updated via CartContext
     } catch (error) {
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  };
+
+  const handleProductClick = (productId: string) => {
+    setSelectedProductId(productId);
+    setView('productDetail');
+  };
+
+  const handleBackToProducts = () => {
+    setSelectedProductId(null);
+    setView('products');
+    setShowCart(false);
   };
 
   const handleCheckout = (items: Array<{ productId: string; quantity: number }>) => {
@@ -248,6 +263,87 @@ function AppContent() {
     );
   }
 
+  // Show product detail page
+  if (view === 'productDetail' && selectedProductId) {
+    return (
+      <div>
+        <header style={{
+          backgroundColor: '#2563eb',
+          color: 'white',
+          padding: '16px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            {user && (
+              <>
+                <span>Welcome, {user.name}</span>
+                <button
+                  onClick={() => setShowCart(!showCart)}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: 'white',
+                    color: '#2563eb',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    position: 'relative'
+                  }}
+                >
+                  {showCart ? 'View Products' : 'View Cart'}
+                  {cartItemCount > 0 && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '-8px',
+                        right: '-8px',
+                        backgroundColor: '#dc2626',
+                        color: 'white',
+                        borderRadius: '50%',
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {cartItemCount}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={logout}
+                  style={{
+                    padding: '6px 12px',
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    color: 'white',
+                    border: '1px solid white',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+        </header>
+        <ProductPage
+          productId={selectedProductId}
+          onBack={handleBackToProducts}
+          onAddToCart={handleAddToCart}
+        />
+      </div>
+    );
+  }
+
   // Main store view
   return (
     <div>
@@ -274,10 +370,32 @@ function AppContent() {
                   borderRadius: '4px',
                   cursor: 'pointer',
                   fontSize: '14px',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  position: 'relative'
                 }}
               >
                 {showCart ? 'View Products' : 'View Cart'}
+                {cartItemCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-8px',
+                      right: '-8px',
+                      backgroundColor: '#dc2626',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {cartItemCount}
+                  </span>
+                )}
               </button>
               <button
                 onClick={logout}
@@ -300,7 +418,10 @@ function AppContent() {
       {showCart && user ? (
         <Cart onCheckout={handleCheckout} />
       ) : (
-        <ProductList onAddToCart={handleAddToCart} />
+        <ProductList 
+          onAddToCart={handleAddToCart}
+          onProductClick={handleProductClick}
+        />
       )}
     </div>
   );
@@ -309,7 +430,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </AuthProvider>
   );
 }
