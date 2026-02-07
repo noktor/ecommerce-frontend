@@ -1,11 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { authService } from '../services/auth';
 
-interface ForgotPasswordProps {
-  onSwitchToLogin: () => void;
-}
-
-export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
+export function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -34,20 +31,22 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
         <p style={{ marginBottom: '20px' }}>
           If the email exists, a password reset link has been sent to {email}.
         </p>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
+            display: 'inline-block',
             padding: '10px 20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
+            textDecoration: 'none'
           }}
         >
           Back to Login
-        </button>
+        </Link>
       </div>
     );
   }
@@ -107,8 +106,8 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
         </button>
       </form>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
             background: 'none',
             border: 'none',
@@ -118,7 +117,7 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
           }}
         >
           Back to Login
-        </button>
+        </Link>
       </div>
     </div>
   );

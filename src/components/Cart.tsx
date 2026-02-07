@@ -7,7 +7,7 @@ interface CartProps {
 }
 
 export function Cart({ onCheckout }: CartProps) {
-  const { cart, removeFromCart, refreshCart } = useCart();
+  const { cart, removeFromCart } = useCart();
   const [products, setProducts] = useState<Record<string, Product>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

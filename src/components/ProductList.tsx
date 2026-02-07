@@ -5,10 +5,9 @@ import { useCart } from '../contexts/CartContext';
 
 interface ProductListProps {
   onAddToCart: (productId: string) => void;
-  onProductClick?: (productId: string) => void;
 }
 
-export function ProductList({ onAddToCart, onProductClick }: ProductListProps) {
+export function ProductList({ onAddToCart }: ProductListProps) {
   const { cart, cartItemCount } = useCart(); // Get cart to listen for changes
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +97,6 @@ export function ProductList({ onAddToCart, onProductClick }: ProductListProps) {
                 product={product}
                 quantityInCart={quantityInCart}
                 onAddToCart={onAddToCart}
-                onProductClick={onProductClick}
               />
             );
           })

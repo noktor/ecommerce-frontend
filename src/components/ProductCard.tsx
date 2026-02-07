@@ -1,53 +1,45 @@
+import { Link } from 'react-router-dom';
 import { Product } from '../services/api';
 
 interface ProductCardProps {
   product: Product;
   quantityInCart: number;
   onAddToCart: (productId: string) => void;
-  onProductClick?: (productId: string) => void;
 }
 
-export function ProductCard({ product, quantityInCart, onAddToCart, onProductClick }: ProductCardProps) {
+export function ProductCard({ product, quantityInCart, onAddToCart }: ProductCardProps) {
   // Calculate available stock: total stock minus what's in cart
   const availableStock = product.stock - quantityInCart;
   const isOutOfStock = availableStock <= 0;
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Don't navigate if clicking the button
-    if ((e.target as HTMLElement).tagName === 'BUTTON') {
-      return;
-    }
-    if (onProductClick) {
-      onProductClick(product.id);
-    }
-  };
-
   return (
-    <div 
-      onClick={handleCardClick}
+    <Link
+      to={`/product/${product.id}`}
       style={{
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        padding: '16px',
-        margin: '8px',
-        maxWidth: '300px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        cursor: onProductClick ? 'pointer' : 'default',
-        transition: 'transform 0.2s, box-shadow 0.2s'
-      }}
-      onMouseEnter={(e) => {
-        if (onProductClick) {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-          e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (onProductClick) {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-        }
+        textDecoration: 'none',
+        color: 'inherit'
       }}
     >
+      <div 
+        style={{
+          border: '1px solid #ddd',
+          borderRadius: '8px',
+          padding: '16px',
+          margin: '8px',
+          maxWidth: '300px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          cursor: 'pointer',
+          transition: 'transform 0.2s, box-shadow 0.2s'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        }}
+      >
       {/* Product Image Preview */}
       {product.imageUrl && (
         <img
@@ -94,7 +86,8 @@ export function ProductCard({ product, quantityInCart, onAddToCart, onProductCli
         </div>
         <button
           onClick={(e) => {
-            e.stopPropagation(); // Prevent card click
+            e.preventDefault();
+            e.stopPropagation();
             onAddToCart(product.id);
           }}
           disabled={isOutOfStock}
@@ -111,7 +104,8 @@ export function ProductCard({ product, quantityInCart, onAddToCart, onProductCli
           {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
         </button>
       </div>
-    </div>
+      </div>
+    </Link>
   );
 }
 

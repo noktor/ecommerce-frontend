@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { api, Product } from '../services/api';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 
-interface ProductPageProps {
-  productId: string;
-  onBack: () => void;
-  onAddToCart: (productId: string) => void;
-}
-
-export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps) {
-  
-  const { cart } = useCart();
+export function ProductPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { cart, addToCart } = useCart();
   const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,19 +15,19 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    if (productId) {
+    if (id) {
       loadProduct();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId]);
+  }, [id]);
 
   const loadProduct = async () => {
-    if (!productId) return;
+    if (!id) return;
     
     try {
       setLoading(true);
       setError(null);
-      const data = await api.products.getById(productId);
+      const data = await api.products.getById(id);
       setProduct(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error loading product');
@@ -43,12 +39,13 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
   const handleAddToCart = async () => {
     if (!product || !user) {
       alert('Please log in to add items to cart');
+      navigate('/login');
       return;
     }
 
     try {
       for (let i = 0; i < quantity; i++) {
-        await onAddToCart(product.id);
+        await addToCart(product.id, 1);
       }
       console.log(`Added ${quantity} item(s) to cart!`);
     } catch (error) {
@@ -69,7 +66,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
       <div style={{ padding: '40px', textAlign: 'center' }}>
         <p style={{ color: 'red' }}>Error: {error || 'Product not found'}</p>
         <button
-          onClick={onBack}
+          onClick={() => navigate('/')}
           style={{
             marginTop: '20px',
             padding: '10px 20px',
@@ -100,21 +97,21 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <button
-        onClick={onBack}
-        style={{
-          marginBottom: '20px',
-          padding: '8px 16px',
-          backgroundColor: '#6b7280',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          fontSize: '14px'
-        }}
-      >
-        ← Back to Products
-      </button>
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            marginBottom: '20px',
+            padding: '8px 16px',
+            backgroundColor: '#6b7280',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          ← Back to Products
+        </button>
 
       <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
         {/* Product Image */}
@@ -253,7 +250,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
             </button>
           ) : (
             <button
-              onClick={() => alert('Please log in to add items to cart')}
+              onClick={() => navigate('/login')}
               style={{
                 width: '100%',
                 padding: '16px',

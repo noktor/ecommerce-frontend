@@ -1,11 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-interface RegisterProps {
-  onSwitchToLogin: () => void;
-}
-
-export function Register({ onSwitchToLogin }: RegisterProps) {
+export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -37,20 +34,22 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
         <p style={{ marginBottom: '20px' }}>
           Please check your email to verify your account before logging in.
         </p>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
+            display: 'inline-block',
             padding: '10px 20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
+            textDecoration: 'none'
           }}
         >
           Go to Login
-        </button>
+        </Link>
       </div>
     );
   }
@@ -146,8 +145,8 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
       </form>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
         <span>Already have an account? </span>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
             background: 'none',
             border: 'none',
@@ -157,7 +156,7 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
           }}
         >
           Login
-        </button>
+        </Link>
       </div>
     </div>
   );

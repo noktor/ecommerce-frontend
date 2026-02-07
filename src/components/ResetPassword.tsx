@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth';
 
-interface ResetPasswordProps {
-  token?: string;
-  onSuccess?: () => void;
-}
-
-export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
+export function ResetPassword() {
+  const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -44,9 +42,7 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
       await authService.resetPassword(token, password);
       setSuccess(true);
       setTimeout(() => {
-        if (onSuccess) {
-          onSuccess();
-        }
+        navigate('/login');
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Password reset failed');
