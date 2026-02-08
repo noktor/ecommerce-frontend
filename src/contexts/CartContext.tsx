@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { api, Cart as CartType, CartItem } from '../services/api';
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import { api, type CartItem, type Cart as CartType } from '../services/api';
 import { useAuth } from './AuthContext';
 
 interface CartContextType {
@@ -55,18 +55,18 @@ const createCartFromItems = (items: CartItem[]): CartType => {
 // Merge two carts (combine quantities for same products)
 const mergeCarts = (localItems: CartItem[], serverItems: CartItem[]): CartItem[] => {
   const merged = new Map<string, number>();
-  
+
   // Add server items first
-  serverItems.forEach(item => {
+  serverItems.forEach((item) => {
     merged.set(item.productId, item.quantity);
   });
-  
+
   // Add local items (sum quantities if product exists)
-  localItems.forEach(item => {
+  localItems.forEach((item) => {
     const existing = merged.get(item.productId) || 0;
     merged.set(item.productId, existing + item.quantity);
   });
-  
+
   return Array.from(merged.entries()).map(([productId, quantity]) => ({
     productId,
     quantity,
@@ -145,8 +145,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         // Add all local items to server cart
         // The server will handle merging quantities if items already exist
         Promise.all(
-          localItems.map(item => 
-            api.cart.addItem(item.productId, item.quantity).catch(err => {
+          localItems.map((item) =>
+            api.cart.addItem(item.productId, item.quantity).catch((err) => {
               console.error(`Error merging cart item ${item.productId}:`, err);
             })
           )
@@ -177,14 +177,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // Guest: add to local cart
       try {
         const localItems = getLocalCart();
-        const existingItem = localItems.find(item => item.productId === productId);
-        
+        const existingItem = localItems.find((item) => item.productId === productId);
+
         if (existingItem) {
           existingItem.quantity += quantity;
         } else {
           localItems.push({ productId, quantity });
         }
-        
+
         saveLocalCart(localItems);
         setCart(createCartFromItems(localItems));
       } catch (error) {
@@ -206,9 +206,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
     } else {
       // Guest: remove from local cart
-      const localItems = getLocalCart().filter(item => item.productId !== productId);
+      const localItems = getLocalCart().filter((item) => item.productId !== productId);
       saveLocalCart(localItems);
-      
+
       if (localItems.length === 0) {
         setCart(null);
       } else {
@@ -243,4 +243,3 @@ export function useCart() {
   }
   return context;
 }
-

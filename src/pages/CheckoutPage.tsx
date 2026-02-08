@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OrderForm } from '../components/OrderForm';
-import { Order } from '../services/api';
-import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
+import type { Order } from '../services/api';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
@@ -36,11 +36,6 @@ export function CheckoutPage() {
   };
 
   return (
-    <OrderForm
-      items={orderItems}
-      onOrderCreated={handleOrderCreated}
-      onCancel={handleCancel}
-    />
+    <OrderForm items={orderItems} onOrderCreated={handleOrderCreated} onCancel={handleCancel} />
   );
 }
-

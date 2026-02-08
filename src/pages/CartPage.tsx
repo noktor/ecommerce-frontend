@@ -1,5 +1,5 @@
-import { Cart } from '../components/Cart';
 import { useNavigate } from 'react-router-dom';
+import { Cart } from '../components/Cart';
 
 export function CartPage() {
   const navigate = useNavigate();
@@ -13,4 +13,3 @@ export function CartPage() {
 
   return <Cart onCheckout={handleCheckout} />;
 }
-

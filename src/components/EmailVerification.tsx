@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { authService } from '../services/auth';
 
@@ -24,9 +24,12 @@ export function EmailVerification() {
       } catch (error) {
         console.error('Email verification error:', error);
         const errorMessage = error instanceof Error ? error.message : 'Email verification failed';
-        
+
         // Check if email is already verified (this is actually a success case)
-        if (errorMessage.includes('already verified') || errorMessage.includes('Email already verified')) {
+        if (
+          errorMessage.includes('already verified') ||
+          errorMessage.includes('Email already verified')
+        ) {
           setStatus('success');
           setMessage('Email already verified. You can now log in.');
         } else {
@@ -60,7 +63,7 @@ export function EmailVerification() {
               backgroundColor: '#2563eb',
               color: 'white',
               textDecoration: 'none',
-              borderRadius: '4px'
+              borderRadius: '4px',
             }}
           >
             Go to Login
@@ -80,7 +83,7 @@ export function EmailVerification() {
               backgroundColor: '#2563eb',
               color: 'white',
               textDecoration: 'none',
-              borderRadius: '4px'
+              borderRadius: '4px',
             }}
           >
             Go to Login
@@ -90,4 +93,3 @@ export function EmailVerification() {
     </div>
   );
 }
-

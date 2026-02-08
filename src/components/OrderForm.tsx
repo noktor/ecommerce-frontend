@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { api, Order } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { api, type Order } from '../services/api';
 
 export interface OrderFormProps {
   items: Array<{ productId: string; quantity: number }>;
@@ -42,10 +42,10 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
       setLoading(true);
       setError(null);
       const order = await api.orders.create(
-        items, 
+        items,
         shippingAddress,
         user ? undefined : guestEmail, // Only send guestEmail if not authenticated
-        user ? undefined : guestName   // Only send guestName if not authenticated
+        user ? undefined : guestName // Only send guestName if not authenticated
       );
       onOrderCreated(order);
     } catch (err) {
@@ -59,13 +59,15 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
     <div style={{ padding: '20px', maxWidth: '500px' }}>
       <h2>Complete Order</h2>
       {!user && (
-        <div style={{ 
-          marginBottom: '20px', 
-          padding: '12px', 
-          backgroundColor: '#fef3c7', 
-          borderRadius: '6px',
-          border: '1px solid #fbbf24'
-        }}>
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '12px',
+            backgroundColor: '#fef3c7',
+            borderRadius: '6px',
+            border: '1px solid #fbbf24',
+          }}
+        >
           <p style={{ margin: 0, fontSize: '14px', color: '#92400e' }}>
             You're checking out as a guest. Please provide your contact information.
           </p>
@@ -89,7 +91,7 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
                   fontSize: '14px',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
-                  fontFamily: 'inherit'
+                  fontFamily: 'inherit',
                 }}
                 required
               />
@@ -109,7 +111,7 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
                   fontSize: '14px',
                   border: '1px solid #ddd',
                   borderRadius: '4px',
-                  fontFamily: 'inherit'
+                  fontFamily: 'inherit',
                 }}
                 required
               />
@@ -131,15 +133,13 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
               fontSize: '14px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontFamily: 'inherit'
+              fontFamily: 'inherit',
             }}
             required
           />
         </div>
         {error && (
-          <div style={{ color: 'red', marginBottom: '16px', fontSize: '14px' }}>
-            {error}
-          </div>
+          <div style={{ color: 'red', marginBottom: '16px', fontSize: '14px' }}>{error}</div>
         )}
         <div style={{ display: 'flex', gap: '12px' }}>
           <button
@@ -152,7 +152,7 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
-              fontSize: '14px'
+              fontSize: '14px',
             }}
           >
             Cancel
@@ -168,7 +168,7 @@ export function OrderForm({ items, onOrderCreated, onCancel }: OrderFormProps) {
               borderRadius: '4px',
               cursor: loading ? 'not-allowed' : 'pointer',
               fontSize: '14px',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
           >
             {loading ? 'Creating order...' : 'Create Order'}

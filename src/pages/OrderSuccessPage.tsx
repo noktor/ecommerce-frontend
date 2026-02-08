@@ -1,5 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Order } from '../services/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import type { Order } from '../services/api';
 
 export function OrderSuccessPage() {
   const navigate = useNavigate();
@@ -14,11 +14,27 @@ export function OrderSuccessPage() {
   return (
     <div style={{ padding: '40px', textAlign: 'center' }}>
       <h1 style={{ color: '#2563eb' }}>✅ Order created successfully!</h1>
-      <div style={{ marginTop: '20px', padding: '20px', border: '2px solid #2563eb', borderRadius: '8px', display: 'inline-block' }}>
-        <p><strong>Order ID:</strong> {order.id}</p>
-        <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
-        <p><strong>Status:</strong> {order.status}</p>
-        <p><strong>Address:</strong> {order.shippingAddress}</p>
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '20px',
+          border: '2px solid #2563eb',
+          borderRadius: '8px',
+          display: 'inline-block',
+        }}
+      >
+        <p>
+          <strong>Order ID:</strong> {order.id}
+        </p>
+        <p>
+          <strong>Total:</strong> ${order.total.toFixed(2)}
+        </p>
+        <p>
+          <strong>Status:</strong> {order.status}
+        </p>
+        <p>
+          <strong>Address:</strong> {order.shippingAddress}
+        </p>
       </div>
       <button
         onClick={() => navigate('/')}
@@ -30,7 +46,7 @@ export function OrderSuccessPage() {
           border: 'none',
           borderRadius: '4px',
           cursor: 'pointer',
-          fontSize: '16px'
+          fontSize: '16px',
         }}
       >
         Back to Store
@@ -38,4 +54,3 @@ export function OrderSuccessPage() {
     </div>
   );
 }
-

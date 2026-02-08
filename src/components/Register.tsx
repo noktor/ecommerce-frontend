@@ -45,7 +45,7 @@ export function Register() {
             borderRadius: '4px',
             cursor: 'pointer',
             fontSize: '16px',
-            textDecoration: 'none'
+            textDecoration: 'none',
           }}
         >
           Go to Login
@@ -59,20 +59,20 @@ export function Register() {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Register</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Name
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Name</label>
           <input
             type="text"
             value={name}
@@ -83,14 +83,12 @@ export function Register() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -101,7 +99,7 @@ export function Register() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -120,7 +118,7 @@ export function Register() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
           <small style={{ color: '#666' }}>Must be at least 6 characters</small>
@@ -137,7 +135,7 @@ export function Register() {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Registering...' : 'Register'}
@@ -152,7 +150,7 @@ export function Register() {
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Login
@@ -161,4 +159,3 @@ export function Register() {
     </div>
   );
 }
-
