@@ -37,19 +37,20 @@ export function ProductPage() {
   };
 
   const handleAddToCart = async () => {
-    if (!product || !user) {
-      alert('Please log in to add items to cart');
-      navigate('/login');
+    if (!product) {
       return;
     }
 
     try {
-      for (let i = 0; i < quantity; i++) {
-        await addToCart(product.id, 1);
-      }
+      // Add items to cart (works for both authenticated and guest users)
+      await addToCart(product.id, quantity);
       console.log(`Added ${quantity} item(s) to cart!`);
     } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error adding to cart:', error);
+      // Only show error if it's not a guest cart operation
+      if (error instanceof Error && !error.message.includes('local cart')) {
+        alert(`Error: ${error.message}`);
+      }
     }
   };
 
@@ -229,43 +230,34 @@ export function ProductPage() {
           )}
 
           {/* Add to Cart Button */}
-          {user ? (
-            <button
-              onClick={handleAddToCart}
-              disabled={availableStock <= 0}
-              style={{
-                width: '100%',
-                padding: '16px',
-                backgroundColor: availableStock > 0 ? '#2563eb' : '#9ca3af',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: availableStock > 0 ? 'pointer' : 'not-allowed',
-                marginBottom: '20px'
-              }}
-            >
-              {availableStock > 0 ? `Add ${quantity} to Cart` : 'Out of Stock'}
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate('/login')}
-              style={{
-                width: '100%',
-                padding: '16px',
-                backgroundColor: '#2563eb',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                marginBottom: '20px'
-              }}
-            >
-              Log in to Add to Cart
-            </button>
+          <button
+            onClick={handleAddToCart}
+            disabled={availableStock <= 0}
+            style={{
+              width: '100%',
+              padding: '16px',
+              backgroundColor: availableStock > 0 ? '#2563eb' : '#9ca3af',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: availableStock > 0 ? 'pointer' : 'not-allowed',
+              marginBottom: '20px'
+            }}
+          >
+            {availableStock > 0 ? `Add ${quantity} to Cart` : 'Out of Stock'}
+          </button>
+          {!user && (
+            <p style={{ 
+              fontSize: '12px', 
+              color: '#6b7280', 
+              textAlign: 'center',
+              marginTop: '-10px',
+              marginBottom: '20px'
+            }}>
+              💡 Login to save your cart permanently
+            </p>
           )}
         </div>
       </div>

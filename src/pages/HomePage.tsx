@@ -1,23 +1,19 @@
 import { ProductList } from '../components/ProductList';
-import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
-import { useNavigate } from 'react-router-dom';
 
 export function HomePage() {
-  const { user } = useAuth();
   const { addToCart } = useCart();
-  const navigate = useNavigate();
 
   const handleAddToCart = async (productId: string) => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
     try {
       await addToCart(productId, 1);
+      // Item added successfully (works for both authenticated and guest users)
     } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error adding to cart:', error);
+      // Only show error if it's not a guest cart operation
+      if (error instanceof Error && !error.message.includes('local cart')) {
+        alert(`Error: ${error.message}`);
+      }
     }
   };
 
