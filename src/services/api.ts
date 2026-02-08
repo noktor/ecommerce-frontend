@@ -7,12 +7,12 @@ function getApiUrl(): string {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  
+
   // In development, use proxy
   if (import.meta.env.DEV) {
     return '/api';
   }
-  
+
   // In production, VITE_API_URL must be set
   // If not set, show error in console and throw
   const error = 'VITE_API_URL is not configured! Please set it in Netlify environment variables.';
@@ -21,7 +21,7 @@ function getApiUrl(): string {
     MODE: import.meta.env.MODE,
     PROD: import.meta.env.PROD,
     DEV: import.meta.env.DEV,
-    VITE_API_URL: import.meta.env.VITE_API_URL
+    VITE_API_URL: import.meta.env.VITE_API_URL,
   });
   throw new Error(error);
 }
@@ -55,6 +55,7 @@ export interface Cart {
   customerId: string;
   items: CartItem[];
   updatedAt: string;
+  expiresAt?: string; // Cart expiration timestamp (ISO string)
 }
 
 export interface OrderItem {
@@ -88,7 +89,7 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
   const token = getAuthToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options?.headers as Record<string, string> || {}),
+    ...((options?.headers as Record<string, string>) || {}),
   };
 
   if (token) {
@@ -137,10 +138,20 @@ export const api = {
     },
   },
   orders: {
-    create: (items: Array<{ productId: string; quantity: number }>, shippingAddress: string): Promise<Order> => {
+    create: (
+      items: Array<{ productId: string; quantity: number }>,
+      shippingAddress: string,
+      guestEmail?: string,
+      guestName?: string
+    ): Promise<Order> => {
       return fetchApi<Order>('/orders', {
         method: 'POST',
-        body: JSON.stringify({ items, shippingAddress }),
+        body: JSON.stringify({
+          items,
+          shippingAddress,
+          ...(guestEmail && { guestEmail }),
+          ...(guestName && { guestName }),
+        }),
       });
     },
     getById: (id: string): Promise<Order> => {
@@ -148,4 +159,3 @@ export const api = {
     },
   },
 };
-

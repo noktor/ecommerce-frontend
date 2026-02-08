@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { api, Product } from '../services/api';
-import { ProductCard } from './ProductCard';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCart } from '../contexts/CartContext';
+import { api, type Product } from '../services/api';
+import { ProductCard } from './ProductCard';
 
 interface ProductListProps {
   onAddToCart: (productId: string) => void;
   onProductClick?: (productId: string) => void;
 }
 
-export function ProductList({ onAddToCart, onProductClick }: ProductListProps) {
+export function ProductList({ onAddToCart }: ProductListProps) {
   const { cart, cartItemCount } = useCart(); // Get cart to listen for changes
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +38,13 @@ export function ProductList({ onAddToCart, onProductClick }: ProductListProps) {
   useEffect(() => {
     const currentCount = cartItemCount;
     const previousCount = previousCartItemCountRef.current;
-    
+
     // Only reload if the count changed significantly (more than 1 item difference)
     // This syncs with backend occasionally without being too aggressive
     if (Math.abs(currentCount - previousCount) > 1 && previousCount > 0) {
       loadProducts();
     }
-    
+
     // Update the ref for next comparison
     previousCartItemCountRef.current = currentCount;
   }, [cartItemCount, loadProducts]);
@@ -89,16 +89,15 @@ export function ProductList({ onAddToCart, onProductClick }: ProductListProps) {
         ) : (
           products.map((product) => {
             // Calculate quantity in cart for this product
-            const cartItem = cart?.items.find(item => item.productId === product.id);
+            const cartItem = cart?.items.find((item) => item.productId === product.id);
             const quantityInCart = cartItem?.quantity || 0;
-            
+
             return (
               <ProductCard
                 key={product.id}
                 product={product}
                 quantityInCart={quantityInCart}
                 onAddToCart={onAddToCart}
-                onProductClick={onProductClick}
               />
             );
           })
@@ -107,4 +106,3 @@ export function ProductList({ onAddToCart, onProductClick }: ProductListProps) {
     </div>
   );
 }
-

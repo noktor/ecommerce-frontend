@@ -1,66 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { authService } from '../services/auth';
 
-interface EmailVerificationProps {
-  token?: string;
-}
-
-export function EmailVerification({ token: tokenProp }: EmailVerificationProps) {
+export function EmailVerification() {
+  const { token } = useParams<{ token: string }>();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [message, setMessage] = useState('');
-  const [actualToken, setActualToken] = useState<string | null>(null);
-
-  // Extract token from URL if not provided as prop
-  useEffect(() => {
-    if (tokenProp) {
-      setActualToken(tokenProp);
-      return;
-    }
-
-    // Try to extract token from URL
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      let token = urlParams.get('token');
-      
-      if (!token) {
-        const pathname = window.location.pathname;
-        const match = pathname.match(/\/verify-email\/([^\/\?]+)/);
-        if (match) {
-          token = match[1];
-        }
-      }
-      
-      if (token) {
-        setActualToken(token);
-      } else {
-        setStatus('error');
-        setMessage('No verification token found in the URL.');
-      }
-    } catch (error) {
-      console.error('Error extracting token from URL:', error);
-      setStatus('error');
-      setMessage('Error processing verification link.');
-    }
-  }, [tokenProp]);
 
   // Verify email when token is available
   useEffect(() => {
     const verifyEmail = async () => {
-      if (!actualToken || actualToken.trim() === '') {
-        return; // Wait for token extraction
+      if (!token || token.trim() === '') {
+        setStatus('error');
+        setMessage('No verification token found in the URL.');
+        return;
       }
 
       try {
-        console.log('Verifying email with token:', actualToken.substring(0, 20) + '...');
-        await authService.verifyEmail(actualToken);
+        console.log('Verifying email with token:', token.substring(0, 20) + '...');
+        await authService.verifyEmail(token);
         setStatus('success');
         setMessage('Email verified successfully! You can now log in.');
       } catch (error) {
         console.error('Email verification error:', error);
         const errorMessage = error instanceof Error ? error.message : 'Email verification failed';
-        
+
         // Check if email is already verified (this is actually a success case)
-        if (errorMessage.includes('already verified') || errorMessage.includes('Email already verified')) {
+        if (
+          errorMessage.includes('already verified') ||
+          errorMessage.includes('Email already verified')
+        ) {
           setStatus('success');
           setMessage('Email already verified. You can now log in.');
         } else {
@@ -70,10 +39,8 @@ export function EmailVerification({ token: tokenProp }: EmailVerificationProps) 
       }
     };
 
-    if (actualToken) {
-      verifyEmail();
-    }
-  }, [actualToken]);
+    verifyEmail();
+  }, [token]);
 
   return (
     <div style={{ maxWidth: '500px', margin: '50px auto', padding: '20px', textAlign: 'center' }}>
@@ -87,8 +54,8 @@ export function EmailVerification({ token: tokenProp }: EmailVerificationProps) 
         <>
           <h2 style={{ color: '#2563eb' }}>✅ Email Verified!</h2>
           <p style={{ marginTop: '20px' }}>{message}</p>
-          <a
-            href="/login"
+          <Link
+            to="/login"
             style={{
               display: 'inline-block',
               marginTop: '20px',
@@ -96,19 +63,19 @@ export function EmailVerification({ token: tokenProp }: EmailVerificationProps) 
               backgroundColor: '#2563eb',
               color: 'white',
               textDecoration: 'none',
-              borderRadius: '4px'
+              borderRadius: '4px',
             }}
           >
             Go to Login
-          </a>
+          </Link>
         </>
       )}
       {status === 'error' && (
         <>
           <h2 style={{ color: '#c33' }}>❌ Verification Failed</h2>
           <p style={{ marginTop: '20px' }}>{message}</p>
-          <a
-            href="/login"
+          <Link
+            to="/login"
             style={{
               display: 'inline-block',
               marginTop: '20px',
@@ -116,14 +83,13 @@ export function EmailVerification({ token: tokenProp }: EmailVerificationProps) 
               backgroundColor: '#2563eb',
               color: 'white',
               textDecoration: 'none',
-              borderRadius: '4px'
+              borderRadius: '4px',
             }}
           >
             Go to Login
-          </a>
+          </Link>
         </>
       )}
     </div>
   );
 }
-

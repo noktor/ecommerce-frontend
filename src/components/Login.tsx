@@ -1,17 +1,14 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-interface LoginProps {
-  onSwitchToRegister: () => void;
-  onSwitchToForgotPassword: () => void;
-}
-
-export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginProps) {
+export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +17,7 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
 
     try {
       await login(email, password);
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -32,20 +30,20 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Login</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -56,7 +54,7 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -74,7 +72,7 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -90,42 +88,41 @@ export function Login({ onSwitchToRegister, onSwitchToForgotPassword }: LoginPro
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
-        <button
-          onClick={onSwitchToForgotPassword}
+        <Link
+          to="/forgot-password"
           style={{
             background: 'none',
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Forgot password?
-        </button>
+        </Link>
       </div>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
         <span>Don't have an account? </span>
-        <button
-          onClick={onSwitchToRegister}
+        <Link
+          to="/register"
           style={{
             background: 'none',
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Register
-        </button>
+        </Link>
       </div>
     </div>
   );
 }
-

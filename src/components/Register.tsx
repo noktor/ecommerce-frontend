@@ -1,11 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-interface RegisterProps {
-  onSwitchToLogin: () => void;
-}
-
-export function Register({ onSwitchToLogin }: RegisterProps) {
+export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -37,20 +34,22 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
         <p style={{ marginBottom: '20px' }}>
           Please check your email to verify your account before logging in.
         </p>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
+            display: 'inline-block',
             padding: '10px 20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
+            textDecoration: 'none',
           }}
         >
           Go to Login
-        </button>
+        </Link>
       </div>
     );
   }
@@ -60,20 +59,20 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Register</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Name
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Name</label>
           <input
             type="text"
             value={name}
@@ -84,14 +83,12 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -102,7 +99,7 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -121,7 +118,7 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
           <small style={{ color: '#666' }}>Must be at least 6 characters</small>
@@ -138,7 +135,7 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Registering...' : 'Register'}
@@ -146,20 +143,19 @@ export function Register({ onSwitchToLogin }: RegisterProps) {
       </form>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
         <span>Already have an account? </span>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
             background: 'none',
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Login
-        </button>
+        </Link>
       </div>
     </div>
   );
 }
-

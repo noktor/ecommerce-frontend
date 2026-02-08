@@ -1,17 +1,13 @@
-import { useState, useEffect } from 'react';
-import { api, Product } from '../services/api';
-import { useCart } from '../contexts/CartContext';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
+import { api, type Product } from '../services/api';
 
-interface ProductPageProps {
-  productId: string;
-  onBack: () => void;
-  onAddToCart: (productId: string) => void;
-}
-
-export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps) {
-  
-  const { cart } = useCart();
+export function ProductPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { cart, addToCart } = useCart();
   const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,19 +15,19 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    if (productId) {
+    if (id) {
       loadProduct();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId]);
+  }, [id]);
 
   const loadProduct = async () => {
-    if (!productId) return;
-    
+    if (!id) return;
+
     try {
       setLoading(true);
       setError(null);
-      const data = await api.products.getById(productId);
+      const data = await api.products.getById(id);
       setProduct(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error loading product');
@@ -41,18 +37,20 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
   };
 
   const handleAddToCart = async () => {
-    if (!product || !user) {
-      alert('Please log in to add items to cart');
+    if (!product) {
       return;
     }
 
     try {
-      for (let i = 0; i < quantity; i++) {
-        await onAddToCart(product.id);
-      }
+      // Add items to cart (works for both authenticated and guest users)
+      await addToCart(product.id, quantity);
       console.log(`Added ${quantity} item(s) to cart!`);
     } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error('Error adding to cart:', error);
+      // Only show error if it's not a guest cart operation
+      if (error instanceof Error && !error.message.includes('local cart')) {
+        alert(`Error: ${error.message}`);
+      }
     }
   };
 
@@ -69,7 +67,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
       <div style={{ padding: '40px', textAlign: 'center' }}>
         <p style={{ color: 'red' }}>Error: {error || 'Product not found'}</p>
         <button
-          onClick={onBack}
+          onClick={() => navigate('/')}
           style={{
             marginTop: '20px',
             padding: '10px 20px',
@@ -78,7 +76,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
           }}
         >
           Back to Products
@@ -88,7 +86,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
   }
 
   // Calculate quantity in cart for this product
-  const cartItem = cart?.items.find(item => item.productId === product.id);
+  const cartItem = cart?.items.find((item) => item.productId === product.id);
   const quantityInCart = cartItem?.quantity || 0;
   const availableStock = product.stock - quantityInCart;
 
@@ -96,12 +94,14 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
   const displayDescription = product.longDescription || product.description;
 
   // Use imageUrl if available, otherwise use a placeholder
-  const imageUrl = product.imageUrl || `https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`;
+  const imageUrl =
+    product.imageUrl ||
+    `https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`;
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
       <button
-        onClick={onBack}
+        onClick={() => navigate('/')}
         style={{
           marginBottom: '20px',
           padding: '8px 16px',
@@ -110,7 +110,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
           border: 'none',
           borderRadius: '4px',
           cursor: 'pointer',
-          fontSize: '14px'
+          fontSize: '14px',
         }}
       >
         ← Back to Products
@@ -128,7 +128,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
               height: 'auto',
               borderRadius: '8px',
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-              objectFit: 'cover'
+              objectFit: 'cover',
             }}
             onError={(e) => {
               // Fallback to placeholder if image fails to load
@@ -140,26 +140,34 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
 
         {/* Product Details */}
         <div style={{ flex: '1', minWidth: '300px' }}>
-          <h1 style={{ marginTop: 0, fontSize: '32px', color: '#1f2937' }}>
-            {product.name}
-          </h1>
-          
+          <h1 style={{ marginTop: 0, fontSize: '32px', color: '#1f2937' }}>{product.name}</h1>
+
           <div style={{ marginBottom: '20px' }}>
-            <span style={{ 
-              fontSize: '36px', 
-              fontWeight: 'bold', 
-              color: '#2563eb' 
-            }}>
+            <span
+              style={{
+                fontSize: '36px',
+                fontWeight: 'bold',
+                color: '#2563eb',
+              }}
+            >
               ${product.price.toFixed(2)}
             </span>
           </div>
 
-          <div style={{ marginBottom: '20px', padding: '12px', backgroundColor: '#f3f4f6', borderRadius: '6px' }}>
+          <div
+            style={{
+              marginBottom: '20px',
+              padding: '12px',
+              backgroundColor: '#f3f4f6',
+              borderRadius: '6px',
+            }}
+          >
             <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#6b7280' }}>
               Category: <strong>{product.category}</strong>
             </p>
             <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>
-              Stock: <strong style={{ color: availableStock > 0 ? '#059669' : '#dc2626' }}>
+              Stock:{' '}
+              <strong style={{ color: availableStock > 0 ? '#059669' : '#dc2626' }}>
                 {availableStock} available
               </strong>
               {quantityInCart > 0 && (
@@ -173,7 +181,14 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
           {/* Quantity Selector */}
           {availableStock > 0 && user && (
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                }}
+              >
                 Quantity:
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -188,7 +203,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
                     borderRadius: '4px',
                     cursor: quantity <= 1 ? 'not-allowed' : 'pointer',
                     fontSize: '16px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                 >
                   −
@@ -208,7 +223,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
                     textAlign: 'center',
                     border: '1px solid #d1d5db',
                     borderRadius: '4px',
-                    fontSize: '16px'
+                    fontSize: '16px',
                   }}
                 />
                 <button
@@ -222,7 +237,7 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
                     borderRadius: '4px',
                     cursor: quantity >= availableStock ? 'not-allowed' : 'pointer',
                     fontSize: '16px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                 >
                   +
@@ -232,62 +247,63 @@ export function ProductPage({ productId, onBack, onAddToCart }: ProductPageProps
           )}
 
           {/* Add to Cart Button */}
-          {user ? (
-            <button
-              onClick={handleAddToCart}
-              disabled={availableStock <= 0}
+          <button
+            onClick={handleAddToCart}
+            disabled={availableStock <= 0}
+            style={{
+              width: '100%',
+              padding: '16px',
+              backgroundColor: availableStock > 0 ? '#2563eb' : '#9ca3af',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: availableStock > 0 ? 'pointer' : 'not-allowed',
+              marginBottom: '20px',
+            }}
+          >
+            {availableStock > 0 ? `Add ${quantity} to Cart` : 'Out of Stock'}
+          </button>
+          {!user && (
+            <p
               style={{
-                width: '100%',
-                padding: '16px',
-                backgroundColor: availableStock > 0 ? '#2563eb' : '#9ca3af',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: availableStock > 0 ? 'pointer' : 'not-allowed',
-                marginBottom: '20px'
+                fontSize: '12px',
+                color: '#6b7280',
+                textAlign: 'center',
+                marginTop: '-10px',
+                marginBottom: '20px',
               }}
             >
-              {availableStock > 0 ? `Add ${quantity} to Cart` : 'Out of Stock'}
-            </button>
-          ) : (
-            <button
-              onClick={() => alert('Please log in to add items to cart')}
-              style={{
-                width: '100%',
-                padding: '16px',
-                backgroundColor: '#2563eb',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '18px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                marginBottom: '20px'
-              }}
-            >
-              Log in to Add to Cart
-            </button>
+              💡 Login to save your cart permanently
+            </p>
           )}
         </div>
       </div>
 
       {/* Product Description */}
-      <div style={{ marginTop: '40px', padding: '24px', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
+      <div
+        style={{
+          marginTop: '40px',
+          padding: '24px',
+          backgroundColor: '#f9fafb',
+          borderRadius: '8px',
+        }}
+      >
         <h2 style={{ marginTop: 0, marginBottom: '16px', fontSize: '24px', color: '#1f2937' }}>
           Product Description
         </h2>
-        <p style={{ 
-          fontSize: '16px', 
-          lineHeight: '1.6', 
-          color: '#4b5563',
-          whiteSpace: 'pre-wrap'
-        }}>
+        <p
+          style={{
+            fontSize: '16px',
+            lineHeight: '1.6',
+            color: '#4b5563',
+            whiteSpace: 'pre-wrap',
+          }}
+        >
           {displayDescription}
         </p>
       </div>
     </div>
   );
 }
-

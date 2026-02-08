@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { authService } from '../services/auth';
 
-interface ResetPasswordProps {
-  token?: string;
-  onSuccess?: () => void;
-}
-
-export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
+export function ResetPassword() {
+  const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -44,9 +42,7 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
       await authService.resetPassword(token, password);
       setSuccess(true);
       setTimeout(() => {
-        if (onSuccess) {
-          onSuccess();
-        }
+        navigate('/login');
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Password reset failed');
@@ -69,13 +65,15 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Reset Password</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
@@ -94,7 +92,7 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -113,7 +111,7 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -129,7 +127,7 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Resetting...' : 'Reset Password'}
@@ -138,4 +136,3 @@ export function ResetPassword({ token, onSuccess }: ResetPasswordProps) {
     </div>
   );
 }
-

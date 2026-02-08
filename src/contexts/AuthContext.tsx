@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService, User } from '../services/auth';
+import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import { authService, type User } from '../services/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -72,4 +72,3 @@ export function useAuth() {
   }
   return context;
 }
-

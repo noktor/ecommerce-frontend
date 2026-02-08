@@ -11,4 +11,3 @@ interface ImportMeta {
   readonly PROD: boolean;
   readonly MODE: string;
 }
-

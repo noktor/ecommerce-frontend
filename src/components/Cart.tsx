@@ -1,21 +1,44 @@
-import { useState, useEffect } from 'react';
-import { api, Product } from '../services/api';
+import { useEffect, useState } from 'react';
 import { useCart } from '../contexts/CartContext';
+import { api, type Product } from '../services/api';
 
 interface CartProps {
   onCheckout: (items: Array<{ productId: string; quantity: number }>) => void;
 }
 
 export function Cart({ onCheckout }: CartProps) {
-  const { cart, removeFromCart, refreshCart } = useCart();
+  const { cart, removeFromCart } = useCart();
   const [products, setProducts] = useState<Record<string, Product>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
 
   useEffect(() => {
     loadProductDetails();
   }, [cart]);
 
+  // Calculate and update time remaining for cart expiration
+  useEffect(() => {
+    if (!cart?.expiresAt) {
+      setTimeRemaining(null);
+      return;
+    }
+
+    const updateTimeRemaining = () => {
+      const now = new Date().getTime();
+      const expiresAt = new Date(cart.expiresAt!).getTime();
+      const remaining = Math.max(0, Math.floor((expiresAt - now) / 1000)); // seconds
+      setTimeRemaining(remaining);
+    };
+
+    // Update immediately
+    updateTimeRemaining();
+
+    // Update every second
+    const interval = setInterval(updateTimeRemaining, 1000);
+
+    return () => clearInterval(interval);
+  }, [cart?.expiresAt]);
   const loadProductDetails = async () => {
     if (!cart || cart.items.length === 0) {
       setProducts({});
@@ -26,14 +49,12 @@ export function Cart({ onCheckout }: CartProps) {
     try {
       setLoading(true);
       setError(null);
-      
+
       // Load product details for cart items
-      const productPromises = cart.items.map(item =>
-        api.products.getById(item.productId)
-      );
+      const productPromises = cart.items.map((item) => api.products.getById(item.productId));
       const productData = await Promise.all(productPromises);
       const productMap: Record<string, Product> = {};
-      productData.forEach(product => {
+      productData.forEach((product) => {
         productMap[product.id] = product;
       });
       setProducts(productMap);
@@ -46,6 +67,8 @@ export function Cart({ onCheckout }: CartProps) {
 
   const handleCheckout = () => {
     if (cart && cart.items.length > 0) {
+      // Store items in sessionStorage for checkout (backwards compatibility)
+      sessionStorage.setItem('orderItems', JSON.stringify(cart.items));
       onCheckout(cart.items);
     }
   };
@@ -81,9 +104,52 @@ export function Cart({ onCheckout }: CartProps) {
     return sum + (product ? product.price * item.quantity : 0);
   }, 0);
 
+  // Format time remaining
+  const formatTimeRemaining = (seconds: number): string => {
+    if (seconds <= 0) return 'Expired';
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const isExpiringSoon = timeRemaining !== null && timeRemaining < 300; // Less than 5 minutes
+
+  // Only show timer for e-commerce with time-sensitive items (tickets, limited stock, etc.)
+  // For regular e-commerce, only show warning when expiring soon
+  const SHOW_CART_TIMER = import.meta.env.VITE_SHOW_CART_TIMER === 'true'; // Configurable via env var
+  const shouldShowTimer = SHOW_CART_TIMER || isExpiringSoon;
+
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Cart</h2>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '20px',
+        }}
+      >
+        <h2 style={{ margin: 0 }}>Cart</h2>
+        {shouldShowTimer && timeRemaining !== null && (
+          <div
+            style={{
+              padding: '8px 16px',
+              backgroundColor: isExpiringSoon ? '#fef3c7' : '#dbeafe',
+              color: isExpiringSoon ? '#92400e' : '#1e40af',
+              borderRadius: '6px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              border: `1px solid ${isExpiringSoon ? '#fbbf24' : '#3b82f6'}`,
+            }}
+          >
+            {isExpiringSoon && '⚠️ '}
+            {SHOW_CART_TIMER
+              ? `Items reserved for: ${formatTimeRemaining(timeRemaining)}`
+              : `Cart expires in: ${formatTimeRemaining(timeRemaining)}`}
+            {isExpiringSoon && ' - Complete checkout soon!'}
+          </div>
+        )}
+      </div>
       <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '16px' }}>
         {cart.items.map((item) => {
           const product = products[item.productId];
@@ -97,7 +163,7 @@ export function Cart({ onCheckout }: CartProps) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '12px',
-                borderBottom: '1px solid #eee'
+                borderBottom: '1px solid #eee',
               }}
             >
               <div style={{ flex: 1 }}>
@@ -120,7 +186,7 @@ export function Cart({ onCheckout }: CartProps) {
                     borderRadius: '4px',
                     cursor: 'pointer',
                     fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                   title="Remove from cart"
                 >
@@ -137,7 +203,7 @@ export function Cart({ onCheckout }: CartProps) {
             borderTop: '2px solid #2563eb',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           <strong style={{ fontSize: '20px' }}>Total:</strong>
@@ -155,7 +221,7 @@ export function Cart({ onCheckout }: CartProps) {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
           }}
         >
           Checkout
@@ -164,4 +230,3 @@ export function Cart({ onCheckout }: CartProps) {
     </div>
   );
 }
-

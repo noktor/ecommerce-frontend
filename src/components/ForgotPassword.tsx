@@ -1,11 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { authService } from '../services/auth';
 
-interface ForgotPasswordProps {
-  onSwitchToLogin: () => void;
-}
-
-export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
+export function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -34,20 +31,22 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
         <p style={{ marginBottom: '20px' }}>
           If the email exists, a password reset link has been sent to {email}.
         </p>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
+            display: 'inline-block',
             padding: '10px 20px',
             backgroundColor: '#2563eb',
             color: 'white',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
+            textDecoration: 'none',
           }}
         >
           Back to Login
-        </button>
+        </Link>
       </div>
     );
   }
@@ -57,13 +56,15 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Forgot Password</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
@@ -71,9 +72,7 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
           Enter your email address and we'll send you a link to reset your password.
         </p>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -84,7 +83,7 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -100,27 +99,26 @@ export function ForgotPassword({ onSwitchToLogin }: ForgotPasswordProps) {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Sending...' : 'Send Reset Link'}
         </button>
       </form>
       <div style={{ marginTop: '15px', textAlign: 'center' }}>
-        <button
-          onClick={onSwitchToLogin}
+        <Link
+          to="/login"
           style={{
             background: 'none',
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Back to Login
-        </button>
+        </Link>
       </div>
     </div>
   );
 }
-
