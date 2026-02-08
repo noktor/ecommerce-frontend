@@ -179,7 +179,7 @@ export function ProductPage() {
           </div>
 
           {/* Quantity Selector */}
-          {availableStock > 0 && user && (
+          {availableStock > 0 && (
             <div style={{ marginBottom: '20px' }}>
               <label
                 style={{
