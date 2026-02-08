@@ -42,7 +42,7 @@ export function ForgotPassword() {
             borderRadius: '4px',
             cursor: 'pointer',
             fontSize: '16px',
-            textDecoration: 'none'
+            textDecoration: 'none',
           }}
         >
           Back to Login
@@ -56,13 +56,15 @@ export function ForgotPassword() {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Forgot Password</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
@@ -70,9 +72,7 @@ export function ForgotPassword() {
           Enter your email address and we'll send you a link to reset your password.
         </p>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -83,7 +83,7 @@ export function ForgotPassword() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -99,7 +99,7 @@ export function ForgotPassword() {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Sending...' : 'Send Reset Link'}
@@ -113,7 +113,7 @@ export function ForgotPassword() {
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Back to Login
@@ -122,4 +122,3 @@ export function ForgotPassword() {
     </div>
   );
 }
-

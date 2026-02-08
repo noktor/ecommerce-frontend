@@ -1,5 +1,4 @@
-import { Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 
@@ -9,14 +8,16 @@ export function Layout() {
 
   return (
     <div>
-      <header style={{
-        backgroundColor: '#2563eb',
-        color: 'white',
-        padding: '16px 20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+      <header
+        style={{
+          backgroundColor: '#2563eb',
+          color: 'white',
+          padding: '16px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
           <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
         </Link>
@@ -36,7 +37,7 @@ export function Layout() {
                   fontSize: '14px',
                   fontWeight: 'bold',
                   textDecoration: 'none',
-                  position: 'relative'
+                  position: 'relative',
                 }}
               >
                 View Cart
@@ -55,7 +56,7 @@ export function Layout() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '12px',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     }}
                   >
                     {cartItemCount}
@@ -71,7 +72,7 @@ export function Layout() {
                   border: '1px solid white',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  fontSize: '14px'
+                  fontSize: '14px',
                 }}
               >
                 Logout
@@ -91,7 +92,7 @@ export function Layout() {
                   fontSize: '14px',
                   fontWeight: 'bold',
                   textDecoration: 'none',
-                  position: 'relative'
+                  position: 'relative',
                 }}
               >
                 View Cart
@@ -110,7 +111,7 @@ export function Layout() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '12px',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     }}
                   >
                     {cartItemCount}
@@ -127,7 +128,7 @@ export function Layout() {
                   borderRadius: '4px',
                   cursor: 'pointer',
                   fontSize: '14px',
-                  textDecoration: 'none'
+                  textDecoration: 'none',
                 }}
               >
                 Login
@@ -140,4 +141,3 @@ export function Layout() {
     </div>
   );
 }
-

@@ -30,20 +30,20 @@ export function Login() {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Login</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Email
-          </label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
           <input
             type="email"
             value={email}
@@ -54,7 +54,7 @@ export function Login() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -72,7 +72,7 @@ export function Login() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -88,7 +88,7 @@ export function Login() {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Logging in...' : 'Login'}
@@ -102,7 +102,7 @@ export function Login() {
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Forgot password?
@@ -117,7 +117,7 @@ export function Login() {
             border: 'none',
             color: '#2563eb',
             cursor: 'pointer',
-            textDecoration: 'underline'
+            textDecoration: 'underline',
           }}
         >
           Register
@@ -126,4 +126,3 @@ export function Login() {
     </div>
   );
 }
-

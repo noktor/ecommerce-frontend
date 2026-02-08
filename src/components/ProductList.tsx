@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { api, Product } from '../services/api';
-import { ProductCard } from './ProductCard';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCart } from '../contexts/CartContext';
+import { api, type Product } from '../services/api';
+import { ProductCard } from './ProductCard';
 
 interface ProductListProps {
   onAddToCart: (productId: string) => void;
@@ -37,13 +37,13 @@ export function ProductList({ onAddToCart }: ProductListProps) {
   useEffect(() => {
     const currentCount = cartItemCount;
     const previousCount = previousCartItemCountRef.current;
-    
+
     // Only reload if the count changed significantly (more than 1 item difference)
     // This syncs with backend occasionally without being too aggressive
     if (Math.abs(currentCount - previousCount) > 1 && previousCount > 0) {
       loadProducts();
     }
-    
+
     // Update the ref for next comparison
     previousCartItemCountRef.current = currentCount;
   }, [cartItemCount, loadProducts]);
@@ -88,9 +88,9 @@ export function ProductList({ onAddToCart }: ProductListProps) {
         ) : (
           products.map((product) => {
             // Calculate quantity in cart for this product
-            const cartItem = cart?.items.find(item => item.productId === product.id);
+            const cartItem = cart?.items.find((item) => item.productId === product.id);
             const quantityInCart = cartItem?.quantity || 0;
-            
+
             return (
               <ProductCard
                 key={product.id}
@@ -105,4 +105,3 @@ export function ProductList({ onAddToCart }: ProductListProps) {
     </div>
   );
 }
-

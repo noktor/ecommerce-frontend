@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { EmailVerification } from './components/EmailVerification';
+import { ForgotPassword } from './components/ForgotPassword';
+import { Layout } from './components/Layout';
+import { Login } from './components/Login';
+import { ProductPage } from './components/ProductPage';
+import { Register } from './components/Register';
+import { ResetPassword } from './components/ResetPassword';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
-import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
-import { ProductPage } from './components/ProductPage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
+import { HomePage } from './pages/HomePage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
-import { Login } from './components/Login';
-import { Register } from './components/Register';
-import { ForgotPassword } from './components/ForgotPassword';
-import { EmailVerification } from './components/EmailVerification';
-import { ResetPassword } from './components/ResetPassword';
 
 function App() {
   return (
@@ -20,81 +20,106 @@ function App() {
         <CartProvider>
           <Routes>
             {/* Public routes */}
-            <Route path="/login" element={
-              <div>
-                <header style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
-                </header>
-                <Login />
-              </div>
-            } />
-            <Route path="/register" element={
-              <div>
-                <header style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
-                </header>
-                <Register />
-              </div>
-            } />
-            <Route path="/forgot-password" element={
-              <div>
-                <header style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
-                </header>
-                <ForgotPassword />
-              </div>
-            } />
-            <Route path="/verify-email/:token" element={
-              <div>
-                <header style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
-                </header>
-                <EmailVerification />
-              </div>
-            } />
-            <Route path="/reset-password/:token" element={
-              <div>
-                <header style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  padding: '16px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
-                </header>
-                <ResetPassword />
-              </div>
-            } />
+            <Route
+              path="/login"
+              element={
+                <div>
+                  <header
+                    style={{
+                      backgroundColor: '#2563eb',
+                      color: 'white',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
+                  </header>
+                  <Login />
+                </div>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <div>
+                  <header
+                    style={{
+                      backgroundColor: '#2563eb',
+                      color: 'white',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
+                  </header>
+                  <Register />
+                </div>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <div>
+                  <header
+                    style={{
+                      backgroundColor: '#2563eb',
+                      color: 'white',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
+                  </header>
+                  <ForgotPassword />
+                </div>
+              }
+            />
+            <Route
+              path="/verify-email/:token"
+              element={
+                <div>
+                  <header
+                    style={{
+                      backgroundColor: '#2563eb',
+                      color: 'white',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
+                  </header>
+                  <EmailVerification />
+                </div>
+              }
+            />
+            <Route
+              path="/reset-password/:token"
+              element={
+                <div>
+                  <header
+                    style={{
+                      backgroundColor: '#2563eb',
+                      color: 'white',
+                      padding: '16px 20px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <h1 style={{ margin: 0 }}>🛒 E-commerce Store</h1>
+                  </header>
+                  <ResetPassword />
+                </div>
+              }
+            />
 
             {/* Routes with layout */}
             <Route element={<Layout />}>

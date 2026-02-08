@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { authService } from '../services/auth';
 
 export function ResetPassword() {
@@ -65,13 +65,15 @@ export function ResetPassword() {
       <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Reset Password</h2>
       <form onSubmit={handleSubmit}>
         {error && (
-          <div style={{
-            padding: '10px',
-            backgroundColor: '#fee',
-            color: '#c33',
-            borderRadius: '4px',
-            marginBottom: '20px'
-          }}>
+          <div
+            style={{
+              padding: '10px',
+              backgroundColor: '#fee',
+              color: '#c33',
+              borderRadius: '4px',
+              marginBottom: '20px',
+            }}
+          >
             {error}
           </div>
         )}
@@ -90,7 +92,7 @@ export function ResetPassword() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -109,7 +111,7 @@ export function ResetPassword() {
               padding: '10px',
               border: '1px solid #ddd',
               borderRadius: '4px',
-              fontSize: '16px'
+              fontSize: '16px',
             }}
           />
         </div>
@@ -125,7 +127,7 @@ export function ResetPassword() {
             borderRadius: '4px',
             fontSize: '16px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
           }}
         >
           {loading ? 'Resetting...' : 'Reset Password'}
@@ -134,4 +136,3 @@ export function ResetPassword() {
     </div>
   );
 }
-

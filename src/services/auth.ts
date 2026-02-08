@@ -7,12 +7,12 @@ function getApiUrl(): string {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  
+
   // In development, use proxy
   if (import.meta.env.DEV) {
     return '/api';
   }
-  
+
   // In production, VITE_API_URL must be set
   // If not set, show error in console and throw
   const error = 'VITE_API_URL is not configured! Please set it in Netlify environment variables.';
@@ -21,7 +21,7 @@ function getApiUrl(): string {
     MODE: import.meta.env.MODE,
     PROD: import.meta.env.PROD,
     DEV: import.meta.env.DEV,
-    VITE_API_URL: import.meta.env.VITE_API_URL
+    VITE_API_URL: import.meta.env.VITE_API_URL,
   });
   throw new Error(error);
 }
@@ -193,4 +193,3 @@ export const authService = {
     return data.data;
   },
 };
-

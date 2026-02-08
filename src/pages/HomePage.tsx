@@ -17,10 +17,5 @@ export function HomePage() {
     }
   };
 
-  return (
-    <ProductList
-      onAddToCart={handleAddToCart}
-    />
-  );
+  return <ProductList onAddToCart={handleAddToCart} />;
 }
-
