@@ -6,6 +6,7 @@ export function CartPage() {
 
   const handleCheckout = (items: Array<{ productId: string; quantity: number }>) => {
     // Store items in sessionStorage temporarily for order form
+    // Works for both authenticated and guest users
     sessionStorage.setItem('orderItems', JSON.stringify(items));
     navigate('/checkout');
   };

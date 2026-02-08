@@ -55,6 +55,7 @@ export interface Cart {
   customerId: string;
   items: CartItem[];
   updatedAt: string;
+  expiresAt?: string; // Cart expiration timestamp (ISO string)
 }
 
 export interface OrderItem {
@@ -137,10 +138,20 @@ export const api = {
     },
   },
   orders: {
-    create: (items: Array<{ productId: string; quantity: number }>, shippingAddress: string): Promise<Order> => {
+    create: (
+      items: Array<{ productId: string; quantity: number }>, 
+      shippingAddress: string,
+      guestEmail?: string,
+      guestName?: string
+    ): Promise<Order> => {
       return fetchApi<Order>('/orders', {
         method: 'POST',
-        body: JSON.stringify({ items, shippingAddress }),
+        body: JSON.stringify({ 
+          items, 
+          shippingAddress,
+          ...(guestEmail && { guestEmail }),
+          ...(guestName && { guestName })
+        }),
       });
     },
     getById: (id: string): Promise<Order> => {

@@ -2,19 +2,29 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OrderForm } from '../components/OrderForm';
 import { Order } from '../services/api';
+import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export function CheckoutPage() {
   const navigate = useNavigate();
+  const { cart } = useCart();
+  const { user } = useAuth();
   const [orderItems, setOrderItems] = useState<Array<{ productId: string; quantity: number }>>([]);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('orderItems');
-    if (stored) {
-      setOrderItems(JSON.parse(stored));
+    // If user is authenticated, use cart from context
+    if (user && cart && cart.items.length > 0) {
+      setOrderItems(cart.items);
     } else {
-      navigate('/cart');
+      // Fallback to sessionStorage (for backwards compatibility)
+      const stored = sessionStorage.getItem('orderItems');
+      if (stored) {
+        setOrderItems(JSON.parse(stored));
+      } else {
+        navigate('/cart');
+      }
     }
-  }, [navigate]);
+  }, [navigate, cart, user]);
 
   const handleOrderCreated = (order: Order) => {
     sessionStorage.removeItem('orderItems');

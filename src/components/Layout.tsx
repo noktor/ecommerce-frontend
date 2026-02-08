@@ -78,21 +78,61 @@ export function Layout() {
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              style={{
-                padding: '6px 12px',
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                color: 'white',
-                border: '1px solid white',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                textDecoration: 'none'
-              }}
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                to="/cart"
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: 'white',
+                  color: '#2563eb',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  textDecoration: 'none',
+                  position: 'relative'
+                }}
+              >
+                View Cart
+                {cartItemCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-8px',
+                      right: '-8px',
+                      backgroundColor: '#dc2626',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {cartItemCount}
+                  </span>
+                )}
+              </Link>
+              <Link
+                to="/login"
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  border: '1px solid white',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  textDecoration: 'none'
+                }}
+              >
+                Login
+              </Link>
+            </>
           )}
         </div>
       </header>

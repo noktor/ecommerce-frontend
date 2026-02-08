@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { Layout } from './components/Layout';
-import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './pages/HomePage';
 import { ProductPage } from './components/ProductPage';
 import { CartPage } from './pages/CartPage';
@@ -97,25 +96,15 @@ function App() {
               </div>
             } />
 
-            {/* Protected routes with layout */}
+            {/* Routes with layout */}
             <Route element={<Layout />}>
               <Route path="/" element={<HomePage />} />
               <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/cart" element={
-                <ProtectedRoute>
-                  <CartPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/checkout" element={
-                <ProtectedRoute>
-                  <CheckoutPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/order-success/:orderId" element={
-                <ProtectedRoute>
-                  <OrderSuccessPage />
-                </ProtectedRoute>
-              } />
+              {/* Cart is public - users can view their cart without login */}
+              <Route path="/cart" element={<CartPage />} />
+              {/* Checkout and order success are public - support guest orders */}
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
             </Route>
 
             {/* Redirect unknown routes to home */}
