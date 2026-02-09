@@ -9,7 +9,7 @@ interface AuthContextType {
     email: string,
     password: string,
     name: string,
-    role?: 'user' | 'retailer'
+    role?: 'customer' | 'retailer'
   ) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     name: string,
-    role?: 'user' | 'retailer'
+    role?: 'customer' | 'retailer'
   ) => {
     await authService.register(email, password, name, role);
     // After registration, user needs to verify email before logging in

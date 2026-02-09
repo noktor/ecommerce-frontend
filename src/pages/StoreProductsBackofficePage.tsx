@@ -1,6 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api, type Product } from '../services/api';
+
+const CATEGORY_OPTIONS = [
+  'Electronics',
+  'Clothing',
+  'Home & Garden',
+  'Books',
+  'Toys',
+  'Beauty',
+  'Sports',
+];
 
 type ProductFormState = {
   name: string;
@@ -21,6 +31,8 @@ export function StoreProductsBackofficePage() {
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
   const [form, setForm] = useState<ProductFormState>({
     name: '',
     description: '',
@@ -50,6 +62,21 @@ export function StoreProductsBackofficePage() {
     void loadProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeId]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target as Node)
+      ) {
+        setCategoryDropdownOpen(false);
+      }
+    }
+    if (categoryDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [categoryDropdownOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -93,6 +120,7 @@ export function StoreProductsBackofficePage() {
         description: form.description.trim(),
         price,
         stock,
+        // Store multiple categories as a comma-separated string in the existing field.
         category: form.category.trim() || 'General',
         imageUrl: form.imageUrl.trim() || undefined,
         thumbnailUrl: form.thumbnailUrl.trim() || undefined,
@@ -153,6 +181,7 @@ export function StoreProductsBackofficePage() {
       description: product.description,
       price: String(product.price),
       stock: String(product.stock),
+      // When editing, show stored comma-separated categories as a single string.
       category: product.category,
       imageUrl: product.imageUrl || '',
       thumbnailUrl: product.thumbnailUrl || '',
@@ -313,23 +342,106 @@ export function StoreProductsBackofficePage() {
                 />
               </div>
             </div>
-            <div>
+            <div ref={categoryDropdownRef} style={{ position: 'relative' }}>
               <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px' }}>
                 Category
               </label>
-              <input
-                type="text"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                placeholder="e.g. Electronics"
+              <button
+                type="button"
+                onClick={() => setCategoryDropdownOpen((open) => !open)}
+                aria-haspopup="listbox"
+                aria-expanded={categoryDropdownOpen}
                 style={{
                   width: '100%',
-                  padding: '8px',
+                  padding: '8px 12px',
                   borderRadius: '4px',
                   border: '1px solid #d1d5db',
+                  backgroundColor: 'white',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '8px',
                 }}
-              />
+              >
+                <span style={{ color: form.category ? undefined : '#6b7280' }}>
+                  {form.category.trim()
+                    ? form.category
+                        .split(',')
+                        .map((c) => c.trim())
+                        .filter(Boolean)
+                        .join(', ')
+                    : 'Select categories...'}
+                </span>
+                <span style={{ transform: categoryDropdownOpen ? 'rotate(180deg)' : 'none' }}>▼</span>
+              </button>
+              {categoryDropdownOpen && (
+                <ul
+                  role="listbox"
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    margin: 0,
+                    marginTop: '4px',
+                    padding: '4px 0',
+                    listStyle: 'none',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '4px',
+                    backgroundColor: 'white',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                    maxHeight: '220px',
+                    overflowY: 'auto',
+                    zIndex: 10,
+                  }}
+                >
+                  {CATEGORY_OPTIONS.map((option) => {
+                    const selectedList = form.category
+                      .split(',')
+                      .map((c) => c.trim())
+                      .filter(Boolean);
+                    const checked = selectedList.includes(option);
+                    return (
+                      <li key={option} role="option" aria-selected={checked}>
+                        <label
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '8px 12px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            backgroundColor: checked ? '#eff6ff' : 'transparent',
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => {
+                              const current = form.category
+                                .split(',')
+                                .map((c) => c.trim())
+                                .filter(Boolean);
+                              const next = checked
+                                ? current.filter((c) => c !== option)
+                                : [...current, option];
+                              setForm((prev) => ({
+                                ...prev,
+                                category: next.join(', '),
+                              }));
+                            }}
+                            style={{ margin: 0 }}
+                          />
+                          {option}
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px' }}>
