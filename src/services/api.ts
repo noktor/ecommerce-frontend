@@ -35,6 +35,7 @@ function getAuthToken(): string | null {
 
 export interface Product {
   id: string;
+  storeId?: string | null;
   name: string;
   description: string;
   price: number;
@@ -77,6 +78,17 @@ export interface Order {
   shippingAddress: string;
 }
 
+export interface Store {
+  id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  phone?: string;
+  address?: string;
+  createdAt: string;
+  ownerId?: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -112,6 +124,38 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
 }
 
 export const api = {
+  stores: {
+    listMine: (): Promise<Store[]> => {
+      return fetchApi<Store[]>('/stores/mine');
+    },
+    create: (payload: {
+      name: string;
+      description?: string;
+      imageUrl?: string;
+      phone?: string;
+      address?: string;
+    }): Promise<Store> => {
+      return fetchApi<Store>('/stores', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    update: (
+      id: string,
+      payload: {
+        name?: string;
+        description?: string;
+        imageUrl?: string;
+        phone?: string;
+        address?: string;
+      }
+    ): Promise<Store> => {
+      return fetchApi<Store>(`/stores/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
+    },
+  },
   products: {
     getAll: (category?: string): Promise<Product[]> => {
       const query = category ? `?category=${encodeURIComponent(category)}` : '';
@@ -119,6 +163,47 @@ export const api = {
     },
     getById: (id: string): Promise<Product> => {
       return fetchApi<Product>(`/products/${id}`);
+    },
+  },
+  retailerProducts: {
+    list: (storeId: string): Promise<Product[]> => {
+      return fetchApi<Product[]>(`/backoffice/stores/${storeId}/products`);
+    },
+    create: (
+      storeId: string,
+      payload: {
+        name: string;
+        description: string;
+        price: number;
+        stock: number;
+        category: string;
+        imageUrl?: string;
+        thumbnailUrl?: string;
+        longDescription?: string;
+      }
+    ): Promise<Product> => {
+      return fetchApi<Product>(`/backoffice/stores/${storeId}/products`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    },
+    update: (
+      productId: string,
+      payload: {
+        name?: string;
+        description?: string;
+        price?: number;
+        stock?: number;
+        category?: string;
+        imageUrl?: string;
+        thumbnailUrl?: string;
+        longDescription?: string;
+      }
+    ): Promise<Product> => {
+      return fetchApi<Product>(`/backoffice/products/${productId}`, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      });
     },
   },
   cart: {
@@ -136,6 +221,18 @@ export const api = {
         method: 'DELETE',
         body: JSON.stringify({ productId }),
       });
+    },
+  },
+  uploads: {
+    /** Upload a product image (data URL from file); returns Cloudinary URLs. */
+    uploadProductImage: (imageDataUrl: string): Promise<{ imageUrl: string; thumbnailUrl: string; publicId: string }> => {
+      return fetchApi<{ imageUrl: string; thumbnailUrl: string; publicId: string }>(
+        '/backoffice/uploads/products',
+        {
+          method: 'POST',
+          body: JSON.stringify({ imageDataUrl }),
+        }
+      );
     },
   },
   orders: {

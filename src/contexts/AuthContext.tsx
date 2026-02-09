@@ -5,9 +5,15 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    name: string,
+    role?: 'user' | 'retailer'
+  ) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  isRetailer: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,8 +45,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(response.user);
   };
 
-  const register = async (email: string, password: string, name: string) => {
-    await authService.register(email, password, name);
+  const register = async (
+    email: string,
+    password: string,
+    name: string,
+    role?: 'user' | 'retailer'
+  ) => {
+    await authService.register(email, password, name, role);
     // After registration, user needs to verify email before logging in
   };
 
@@ -58,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         isAuthenticated: !!user,
+        isRetailer: user?.role === 'retailer',
       }}
     >
       {children}

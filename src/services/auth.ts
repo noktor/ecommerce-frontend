@@ -34,6 +34,7 @@ export interface User {
   name: string;
   emailVerified: boolean;
   status?: string;
+  role?: 'user' | 'retailer';
 }
 
 export interface LoginResponse {
@@ -70,14 +71,19 @@ export const authService = {
     return !!this.getToken();
   },
 
-  // Register new user
-  async register(email: string, password: string, name: string): Promise<RegisterResponse> {
+  // Register new user (optional role: 'user' | 'retailer'; defaults to user)
+  async register(
+    email: string,
+    password: string,
+    name: string,
+    role?: 'user' | 'retailer'
+  ): Promise<RegisterResponse> {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password, name }),
+      body: JSON.stringify({ email, password, name, role: role ?? 'user' }),
     });
 
     const data = await response.json();

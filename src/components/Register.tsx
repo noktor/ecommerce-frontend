@@ -6,6 +6,7 @@ export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [role, setRole] = useState<'user' | 'retailer'>('user');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,7 +19,7 @@ export function Register() {
     setLoading(true);
 
     try {
-      await register(email, password, name);
+      await register(email, password, name, role);
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
@@ -102,6 +103,33 @@ export function Register() {
               fontSize: '16px',
             }}
           />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+            I want to register as
+          </label>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="role"
+                value="user"
+                checked={role === 'user'}
+                onChange={() => setRole('user')}
+              />
+              <span>Customer (shop & buy)</span>
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+              <input
+                type="radio"
+                name="role"
+                value="retailer"
+                checked={role === 'retailer'}
+                onChange={() => setRole('retailer')}
+              />
+              <span>Retailer (sell & manage store)</span>
+            </label>
+          </div>
         </div>
         <div style={{ marginBottom: '15px' }}>
           <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
