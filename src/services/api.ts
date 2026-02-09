@@ -42,7 +42,8 @@ export interface Product {
   category: string;
   createdAt: string;
   longDescription?: string; // Optional detailed description
-  imageUrl?: string; // Optional product image URL
+  imageUrl?: string; // Main product image (e.g. product page)
+  thumbnailUrl?: string; // Smaller image for cards (optional; falls back to imageUrl)
 }
 
 export interface CartItem {

@@ -93,10 +93,9 @@ export function ProductPage() {
   // Use longDescription if available, otherwise use description
   const displayDescription = product.longDescription || product.description;
 
-  // Use imageUrl if available, otherwise use a placeholder
-  const imageUrl =
-    product.imageUrl ||
-    `https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`;
+  // Main product image: imageUrl (Cloudinary, etc.) or placeholder (placehold.co)
+  const placeholderUrl = `https://placehold.co/600x400/f3f4f6/9ca3af?text=${encodeURIComponent(product.name)}`;
+  const imageUrl = product.imageUrl || placeholderUrl;
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -117,23 +116,26 @@ export function ProductPage() {
       </button>
 
       <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-        {/* Product Image */}
+        {/* Product image (main image for product page) */}
         <div style={{ flex: '1', minWidth: '300px' }}>
           <img
             src={imageUrl}
-            alt={product.name}
+            alt={`${product.name} - product image`}
             style={{
               width: '100%',
               maxWidth: '600px',
+              minHeight: '280px',
               height: 'auto',
               borderRadius: '8px',
               boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
               objectFit: 'cover',
+              backgroundColor: '#f3f4f6',
             }}
             onError={(e) => {
-              // Fallback to placeholder if image fails to load
               const target = e.target as HTMLImageElement;
-              target.src = `https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`;
+              if (target.src !== placeholderUrl) {
+                target.src = placeholderUrl;
+              }
             }}
           />
         </div>
