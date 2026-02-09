@@ -24,7 +24,28 @@ export function Layout() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           {user ? (
             <>
-              <span>Welcome, {user.name}</span>
+              <span>
+                Welcome, {user.name}
+                {user.role === 'retailer' ? ' (Retailer)' : ''}
+              </span>
+              {user.role === 'retailer' && (
+                <Link
+                  to="/backoffice/stores"
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: 'white',
+                    color: '#2563eb',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    textDecoration: 'none',
+                  }}
+                >
+                  Backoffice
+                </Link>
+              )}
               <Link
                 to="/cart"
                 style={{

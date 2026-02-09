@@ -6,12 +6,16 @@ import { Login } from './components/Login';
 import { ProductPage } from './components/ProductPage';
 import { Register } from './components/Register';
 import { ResetPassword } from './components/ResetPassword';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { RetailerRoute } from './components/RetailerRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { HomePage } from './pages/HomePage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
+import { StoresBackofficePage } from './pages/StoresBackofficePage';
+import { StoreProductsBackofficePage } from './pages/StoreProductsBackofficePage';
 
 function App() {
   return (
@@ -130,6 +134,28 @@ function App() {
               {/* Checkout and order success are public - support guest orders */}
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/order-success/:orderId" element={<OrderSuccessPage />} />
+
+              {/* Backoffice routes for retailers */}
+              <Route
+                path="/backoffice/stores"
+                element={
+                  <ProtectedRoute>
+                    <RetailerRoute>
+                      <StoresBackofficePage />
+                    </RetailerRoute>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/backoffice/stores/:storeId/products"
+                element={
+                  <ProtectedRoute>
+                    <RetailerRoute>
+                      <StoreProductsBackofficePage />
+                    </RetailerRoute>
+                  </ProtectedRoute>
+                }
+              />
             </Route>
 
             {/* Redirect unknown routes to home */}
