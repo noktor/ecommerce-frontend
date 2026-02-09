@@ -6,7 +6,7 @@ export function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState<'user' | 'retailer'>('user');
+  const [role, setRole] = useState<'customer' | 'retailer'>('customer');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -113,9 +113,9 @@ export function Register() {
               <input
                 type="radio"
                 name="role"
-                value="user"
-                checked={role === 'user'}
-                onChange={() => setRole('user')}
+                value="customer"
+                checked={role === 'customer'}
+                onChange={() => setRole('customer')}
               />
               <span>Customer (shop & buy)</span>
             </label>

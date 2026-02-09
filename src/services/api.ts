@@ -54,7 +54,7 @@ export interface CartItem {
 
 export interface Cart {
   id: string | null;
-  customerId: string;
+  userId: string;
   items: CartItem[];
   updatedAt: string;
   expiresAt?: string; // Cart expiration timestamp (ISO string)
@@ -70,7 +70,7 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
-  customerId: string;
+  userId: string | null;
   items: OrderItem[];
   total: number;
   status: string;

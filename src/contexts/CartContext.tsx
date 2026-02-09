@@ -47,7 +47,7 @@ const clearLocalCart = (): void => {
 const createCartFromItems = (items: CartItem[]): CartType => {
   return {
     id: null,
-    customerId: 'guest',
+    userId: 'guest',
     items,
     updatedAt: new Date().toISOString(),
   };
