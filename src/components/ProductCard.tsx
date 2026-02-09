@@ -13,6 +13,10 @@ export function ProductCard({ product, quantityInCart, onAddToCart }: ProductCar
   const availableStock = product.stock - quantityInCart;
   const isOutOfStock = availableStock <= 0;
 
+  // Tiny placeholder for cards when no image (placehold.co, 300x200)
+  const placeholderUrl = `https://placehold.co/300x200/f3f4f6/9ca3af?text=${encodeURIComponent(product.name)}`;
+  const imageUrl = product.thumbnailUrl || product.imageUrl || placeholderUrl;
+
   return (
     <Link
       to={`/product/${product.id}`}
@@ -41,24 +45,25 @@ export function ProductCard({ product, quantityInCart, onAddToCart }: ProductCar
           e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
         }}
       >
-        {/* Product Image Preview */}
-        {product.imageUrl && (
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            style={{
-              width: '100%',
-              height: '200px',
-              objectFit: 'cover',
-              borderRadius: '6px',
-              marginBottom: '12px',
-            }}
-            onError={(e) => {
-              // Hide image if it fails to load
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        )}
+        {/* Product image: thumbnail or main image, or tiny placeholder */}
+        <img
+          src={imageUrl}
+          alt={product.name}
+          style={{
+            width: '100%',
+            height: '200px',
+            objectFit: 'cover',
+            borderRadius: '6px',
+            marginBottom: '12px',
+            backgroundColor: '#f3f4f6',
+          }}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            if (target.src !== placeholderUrl) {
+              target.src = placeholderUrl;
+            }
+          }}
+        />
 
         <h3 style={{ marginTop: 0 }}>{product.name}</h3>
         <p style={{ color: '#666', fontSize: '14px' }}>{product.category}</p>
