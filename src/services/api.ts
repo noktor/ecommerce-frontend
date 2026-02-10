@@ -57,7 +57,9 @@ export interface Cart {
   userId: string;
   items: CartItem[];
   updatedAt: string;
-  expiresAt?: string; // Cart expiration timestamp (ISO string)
+  // Backend no longer deletes by TTL; status/lastActivityAt drive lifecycle.
+  status: 'ACTIVE' | 'INACTIVE' | 'ABANDONED' | 'EXPIRED';
+  lastActivityAt: string;
 }
 
 export interface OrderItem {
