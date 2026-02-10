@@ -45,11 +45,14 @@ const clearLocalCart = (): void => {
 
 // Convert local cart items to Cart type
 const createCartFromItems = (items: CartItem[]): CartType => {
+  const nowIso = new Date().toISOString();
   return {
     id: null,
     userId: 'guest',
     items,
-    updatedAt: new Date().toISOString(),
+    updatedAt: nowIso,
+    status: 'ACTIVE',
+    lastActivityAt: nowIso,
   };
 };
 
@@ -116,7 +119,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const localItems = getLocalCart();
         if (localItems.length > 0) {
           const mergedItems = mergeCarts(localItems, serverCart.items);
-          // Save merged cart to server (we'll do this after login)
+          // Save merged cart to server (we'll do this after login).
+          // Preserve server status/lastActivityAt; only override items.
           setCart({ ...serverCart, items: mergedItems });
           // Clear local cart after merge
           clearLocalCart();
