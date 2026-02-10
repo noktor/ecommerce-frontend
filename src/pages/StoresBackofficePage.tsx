@@ -92,7 +92,12 @@ export function StoresBackofficePage() {
         imageUrl: result.imageUrl,
       }));
     } catch (err) {
-      setImageUploadError(err instanceof Error ? err.message : 'Upload failed');
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      const friendly =
+        msg === 'Internal server error' || msg === 'API request failed'
+          ? 'Upload failed. Try a smaller image (under 2 MB) or try again later.'
+          : msg;
+      setImageUploadError(friendly);
     } finally {
       setImageUploading(false);
     }
